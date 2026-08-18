@@ -27,9 +27,8 @@ export const createOwner = async (body: any) => {
   return data;
 };
 
-
 export const deleteOwner = async (
-  id: number
+  id: string
 ) => {
   const { data } = await api.delete(
     `/admin/${id}`
@@ -39,7 +38,7 @@ export const deleteOwner = async (
 };
 
 export const blockOwner = async (
-  id: number
+  id: string
 ) => {
   const { data } = await api.patch(
     `/admin/${id}/block`
@@ -48,8 +47,18 @@ export const blockOwner = async (
   return data;
 };
 
+export const activateOwner = async (
+  id: string
+) => {
+  const { data } = await api.patch(
+    `/admin/${id}/activate`
+  );
+
+  return data;
+};
+
 export const resetPassword = async (
-  id: number,
+  id: string,
   password: string
 ) => {
   const { data } = await api.patch(
@@ -61,19 +70,28 @@ export const resetPassword = async (
 
   return data;
 };
+
 export const extendLicense = (
-  id: number,
+  id: string,
   data: { expiresAt: string }
 ) => {
-  return api.patch(`/admin/${id}/extend-license`, data);
+  return api.patch(
+    `/admin/${id}/extend-license`,
+    data
+  );
 };
+
 export const updateOwner = (
-  id: number,
+  id: string,
   data: {
     companyName: string;
     username: string;
     phone?: string;
+    address?: string;
   }
 ) => {
-  return api.put(`/admin/${id}`, data);
+  return api.put(
+    `/admin/${id}`,
+    data
+  );
 };

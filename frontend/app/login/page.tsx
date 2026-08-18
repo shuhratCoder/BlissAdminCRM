@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import api from "@/services/api";
+
 
 export default function LoginPage() {
   const router = useRouter();
@@ -33,15 +34,11 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
 
-    const res = await axios.post(
-      "http://localhost:4000/admin/login",
-      form
-    );
+    const res = await api.post("/admin/login", form);
 
-    // Tokenni localStorage ga saqlaymiz
-    localStorage.setItem("token", res.data.token);
+localStorage.setItem("token", res.data.token);
 
-    router.push("/dashboard");
+router.replace("/dashboard");
   } catch (err: any) {
     setError(
       err.response?.data?.message ||

@@ -30,6 +30,11 @@ const Owner = sequelize.define("Owner", {
     unique: true,
   },
 
+  address: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+
   status: {
     type: DataTypes.ENUM(
       "active",

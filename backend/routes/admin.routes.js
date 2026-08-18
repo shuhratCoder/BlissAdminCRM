@@ -59,7 +59,7 @@ router.post("/setup", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
-
+console.log("Login request body:", req.body);
     if (!username || !password) {
       return res.status(400).json({
         success: false,
