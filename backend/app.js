@@ -26,7 +26,7 @@ const PORT = process.env.PORT || 4000;
 */
 
 const allowedOrigins = [
-  "http://192.168.8.222:3001",
+  "http://localhost:3001",
   "http://127.0.0.1:3009",
   "http://localhost:3009",
 ];
