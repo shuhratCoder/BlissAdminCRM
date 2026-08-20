@@ -7,6 +7,7 @@ import CompanyTable from "./companyTable";
 import CompanyDialog from "./companyDialog";
 import DeleteCompanyDialog from "./deleteCompanyDialog";
 import DeadlineModal from "./deadlineModal";
+import ResetPasswordModal from "./resetPaswordModal";
 
 import {
   getOwners,
@@ -15,32 +16,24 @@ import {
 } from "@/services/owner";
 
 export default function CompaniesPage() {
-  /*
-  |--------------------------------------------------------------------------
-  | Companies
-  |--------------------------------------------------------------------------
-  */
+  // ==========================================================
+  // COMPANIES
+  // ==========================================================
 
-  const [owners, setOwners] =
-    useState<any[]>([]);
+  const [owners, setOwners] = useState<any[]>([]);
 
-  /*
-  |--------------------------------------------------------------------------
-  | Company dialog
-  |--------------------------------------------------------------------------
-  */
+  // ==========================================================
+  // COMPANY CREATE / EDIT
+  // ==========================================================
 
-  const [open, setOpen] =
-    useState(false);
+  const [open, setOpen] = useState(false);
 
   const [selectedOwner, setSelectedOwner] =
     useState<any>(null);
 
-  /*
-  |--------------------------------------------------------------------------
-  | Delete dialog
-  |--------------------------------------------------------------------------
-  */
+  // ==========================================================
+  // DELETE
+  // ==========================================================
 
   const [deleteOpen, setDeleteOpen] =
     useState(false);
@@ -48,11 +41,9 @@ export default function CompaniesPage() {
   const [deleteOwnerData, setDeleteOwnerData] =
     useState<any>(null);
 
-  /*
-  |--------------------------------------------------------------------------
-  | Deadline / License dialog
-  |--------------------------------------------------------------------------
-  */
+  // ==========================================================
+  // LICENSE / DEADLINE
+  // ==========================================================
 
   const [deadlineOpen, setDeadlineOpen] =
     useState(false);
@@ -60,57 +51,53 @@ export default function CompaniesPage() {
   const [deadlineOwner, setDeadlineOwner] =
     useState<any>(null);
 
-  /*
-  |--------------------------------------------------------------------------
-  | Pagination
-  |--------------------------------------------------------------------------
-  */
+  // ==========================================================
+  // RESET PASSWORD
+  // ==========================================================
 
-  const [pagination, setPagination] =
-    useState({
-      page: 1,
-      limit: 10,
-      total: 0,
-      pages: 1,
-    });
+  const [resetPasswordOpen, setResetPasswordOpen] =
+    useState(false);
 
-  const [page, setPage] =
-    useState(1);
+  const [resetPasswordOwner, setResetPasswordOwner] =
+    useState<any>(null);
 
-  const [limit, setLimit] =
-    useState(10);
+  // ==========================================================
+  // PAGINATION
+  // ==========================================================
 
-  /*
-  |--------------------------------------------------------------------------
-  | Filters
-  |--------------------------------------------------------------------------
-  */
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+    total: 0,
+    pages: 1,
+  });
 
-  const [status, setStatus] =
-    useState("all");
+  const [page, setPage] = useState(1);
 
-  const [search, setSearch] =
-    useState("");
+  const [limit, setLimit] = useState(10);
 
-  /*
-  |--------------------------------------------------------------------------
-  | Companiesni yuklash
-  |--------------------------------------------------------------------------
-  */
+  // ==========================================================
+  // FILTERS
+  // ==========================================================
+
+  const [status, setStatus] = useState("all");
+
+  const [search, setSearch] = useState("");
+
+  // ==========================================================
+  // LOAD COMPANIES
+  // ==========================================================
 
   async function load() {
     try {
-      const res =
-        await getOwners({
-          page,
-          limit,
-          search,
-          status,
-        });
+      const res = await getOwners({
+        page,
+        limit,
+        search,
+        status,
+      });
 
-      setOwners(
-        res.owners || []
-      );
+      setOwners(res.owners || []);
 
       setPagination(
         res.pagination || {
@@ -128,11 +115,9 @@ export default function CompaniesPage() {
     }
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | Filter / pagination o'zgarganda qayta yuklash
-  |--------------------------------------------------------------------------
-  */
+  // ==========================================================
+  // RELOAD
+  // ==========================================================
 
   useEffect(() => {
     load();
@@ -143,97 +128,75 @@ export default function CompaniesPage() {
     status,
   ]);
 
-  /*
-  |--------------------------------------------------------------------------
-  | Firma qo'shish
-  |--------------------------------------------------------------------------
-  */
+  // ==========================================================
+  // ADD COMPANY
+  // ==========================================================
 
   function handleAdd() {
     setSelectedOwner(null);
     setOpen(true);
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | Firma tahrirlash
-  |--------------------------------------------------------------------------
-  */
+  // ==========================================================
+  // EDIT COMPANY
+  // ==========================================================
 
-  function handleEdit(
-    owner: any
-  ) {
+  function handleEdit(owner: any) {
     setSelectedOwner(owner);
     setOpen(true);
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | Firma o'chirish
-  |--------------------------------------------------------------------------
-  */
+  // ==========================================================
+  // DELETE COMPANY
+  // ==========================================================
 
-  function handleDelete(
-    owner: any
-  ) {
+  function handleDelete(owner: any) {
     setDeleteOwnerData(owner);
     setDeleteOpen(true);
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | Parolni almashtirish
-  |--------------------------------------------------------------------------
-  |
-  | Hozircha mavjud funksiyani o'zgartirmaymiz.
-  | Keyingi bosqichda ResetPasswordModal bilan ulaymiz.
-  |
-  */
+  // ==========================================================
+  // RESET PASSWORD
+  // ==========================================================
 
-  function handleResetPassword(
-    owner: any
-  ) {
-    console.log(
-      "Reset Password",
-      owner
-    );
+  function handleResetPassword(owner: any) {
+    setResetPasswordOwner(owner);
+    setResetPasswordOpen(true);
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | Litsenziyani uzaytirish
-  |--------------------------------------------------------------------------
-  */
+  // ==========================================================
+  // CLOSE RESET PASSWORD
+  // ==========================================================
 
-  function handleExtendLicense(
-    owner: any
-  ) {
+  function handleResetPasswordClose() {
+    setResetPasswordOpen(false);
+    setResetPasswordOwner(null);
+  }
+
+  // ==========================================================
+  // EXTEND LICENSE
+  // ==========================================================
+
+  function handleExtendLicense(owner: any) {
     setDeadlineOwner(owner);
     setDeadlineOpen(true);
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | Ownerni bloklash
-  |--------------------------------------------------------------------------
-  */
+  // ==========================================================
+  // BLOCK OWNER
+  // ==========================================================
 
-  async function handleBlock(
-    owner: any
-  ) {
-    const confirmed =
-      window.confirm(
-        `"${owner.companyName}" firmasini bloklamoqchimisiz?`
-      );
+  async function handleBlock(owner: any) {
+    const confirmed = window.confirm(
+      `"${owner.companyName}" firmasini bloklamoqchimisiz?`
+    );
 
     if (!confirmed) {
       return;
     }
 
     try {
-      await blockOwner(
-        owner.id
-      );
+      await blockOwner(owner.id);
 
       await load();
     } catch (error: any) {
@@ -249,28 +212,21 @@ export default function CompaniesPage() {
     }
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | Ownerni aktiv qilish
-  |--------------------------------------------------------------------------
-  */
+  // ==========================================================
+  // ACTIVATE OWNER
+  // ==========================================================
 
-  async function handleActivate(
-    owner: any
-  ) {
-    const confirmed =
-      window.confirm(
-        `"${owner.companyName}" firmasini aktiv qilmoqchimisiz?`
-      );
+  async function handleActivate(owner: any) {
+    const confirmed = window.confirm(
+      `"${owner.companyName}" firmasini aktiv qilmoqchimisiz?`
+    );
 
     if (!confirmed) {
       return;
     }
 
     try {
-      await activateOwner(
-        owner.id
-      );
+      await activateOwner(owner.id);
 
       await load();
     } catch (error: any) {
@@ -286,50 +242,42 @@ export default function CompaniesPage() {
     }
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | Company dialog yopish
-  |--------------------------------------------------------------------------
-  */
+  // ==========================================================
+  // CLOSE COMPANY DIALOG
+  // ==========================================================
 
   function handleCompanyClose() {
     setOpen(false);
     setSelectedOwner(null);
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | Delete dialog yopish
-  |--------------------------------------------------------------------------
-  */
+  // ==========================================================
+  // CLOSE DELETE DIALOG
+  // ==========================================================
 
   function handleDeleteClose() {
     setDeleteOpen(false);
     setDeleteOwnerData(null);
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | Deadline modal yopish
-  |--------------------------------------------------------------------------
-  */
+  // ==========================================================
+  // CLOSE DEADLINE MODAL
+  // ==========================================================
 
   function handleDeadlineClose() {
     setDeadlineOpen(false);
     setDeadlineOwner(null);
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | Render
-  |--------------------------------------------------------------------------
-  */
+  // ==========================================================
+  // RENDER
+  // ==========================================================
 
   return (
     <>
-      {/* ========================================================== */}
+      {/* ====================================================== */}
       {/* TOOLBAR */}
-      {/* ========================================================== */}
+      {/* ====================================================== */}
 
       <CompanyToolbar
         search={search}
@@ -359,71 +307,45 @@ export default function CompaniesPage() {
         onAdd={handleAdd}
       />
 
-      {/* ========================================================== */}
+      {/* ====================================================== */}
       {/* COMPANY TABLE */}
-      {/* ========================================================== */}
+      {/* ====================================================== */}
 
       <CompanyTable
         owners={owners}
-
-        onEdit={
-          handleEdit
-        }
-
-        onDelete={
-          handleDelete
-        }
-
-        onResetPassword={
-          handleResetPassword
-        }
-
-        onExtendLicense={
-          handleExtendLicense
-        }
-
-        onBlock={
-          handleBlock
-        }
-
-        onActivate={
-          handleActivate
-        }
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onResetPassword={handleResetPassword}
+        onExtendLicense={handleExtendLicense}
+        onBlock={handleBlock}
+        onActivate={handleActivate}
       />
 
-      {/* ========================================================== */}
+      {/* ====================================================== */}
       {/* COMPANY CREATE / EDIT */}
-      {/* ========================================================== */}
+      {/* ====================================================== */}
 
       <CompanyDialog
         open={open}
         owner={selectedOwner}
-        onClose={
-          handleCompanyClose
-        }
-        onSuccess={
-          load
-        }
+        onClose={handleCompanyClose}
+        onSuccess={load}
       />
 
-      {/* ========================================================== */}
+      {/* ====================================================== */}
       {/* DELETE */}
-      {/* ========================================================== */}
+      {/* ====================================================== */}
 
       <DeleteCompanyDialog
         open={deleteOpen}
         owner={deleteOwnerData}
-        onClose={
-          handleDeleteClose
-        }
-        onSuccess={
-          load
-        }
+        onClose={handleDeleteClose}
+        onSuccess={load}
       />
 
-      {/* ========================================================== */}
+      {/* ====================================================== */}
       {/* LICENSE EXTEND */}
-      {/* ========================================================== */}
+      {/* ====================================================== */}
 
       <DeadlineModal
         open={deadlineOpen}
@@ -431,19 +353,31 @@ export default function CompaniesPage() {
           deadlineOwner?.id || ""
         }
         companyName={
-          deadlineOwner?.companyName ||
-          ""
+          deadlineOwner?.companyName || ""
         }
         currentExpireDate={
-          deadlineOwner?.license
-            ?.expiresAt
+          deadlineOwner?.license?.expiresAt
+        }
+        onClose={handleDeadlineClose}
+        onSuccess={load}
+      />
+
+      {/* ====================================================== */}
+      {/* RESET PASSWORD */}
+      {/* ====================================================== */}
+
+      <ResetPasswordModal
+        open={resetPasswordOpen}
+        ownerId={
+          resetPasswordOwner?.id || ""
+        }
+        companyName={
+          resetPasswordOwner?.companyName || ""
         }
         onClose={
-          handleDeadlineClose
+          handleResetPasswordClose
         }
-        onSuccess={
-          load
-        }
+        onSuccess={load}
       />
     </>
   );

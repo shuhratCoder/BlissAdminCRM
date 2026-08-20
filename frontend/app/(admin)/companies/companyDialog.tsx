@@ -3,25 +3,17 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
 import {
   createOwner,
   updateOwner,
 } from "@/services/owner";
+
 import { toast } from "sonner";
 
-/*
-|--------------------------------------------------------------------------
-| Validation schema
-|--------------------------------------------------------------------------
-|
-| Password bu yerda optional.
-|
-| Sababi:
-| - yangi firma qo'shilganda password majburiyligini
-|   onSubmit ichida tekshiramiz;
-| - firma tahrirlanganda password kiritish shart emas.
-|
-*/
+// ==========================================================
+// VALIDATION
+// ==========================================================
 
 const schema = z.object({
   companyName: z
@@ -40,6 +32,8 @@ const schema = z.object({
       "Username kamida 3 ta belgidan iborat bo'lishi kerak"
     ),
 
+  // CREATE paytida kerak.
+  // EDIT paytida ishlatilmaydi.
   password: z
     .string()
     .optional(),
@@ -70,6 +64,10 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
+// ==========================================================
+// PROPS
+// ==========================================================
+
 interface Props {
   open: boolean;
   owner?: any;
@@ -77,28 +75,27 @@ interface Props {
   onSuccess: () => void;
 }
 
+// ==========================================================
+// COMPONENT
+// ==========================================================
+
 export default function CompanyDialog({
   open,
   owner,
   onClose,
   onSuccess,
 }: Props) {
-  /*
-  |--------------------------------------------------------------------------
-  | Bugungi sana
-  |--------------------------------------------------------------------------
-  */
+  // ========================================================
+  // TODAY
+  // ========================================================
 
-  const today =
-    new Date()
-      .toISOString()
-      .split("T")[0];
+  const today = new Date()
+    .toISOString()
+    .split("T")[0];
 
-  /*
-  |--------------------------------------------------------------------------
-  | React Hook Form
-  |--------------------------------------------------------------------------
-  */
+  // ========================================================
+  // FORM
+  // ========================================================
 
   const {
     register,
@@ -106,6 +103,7 @@ export default function CompanyDialog({
     reset,
     setError,
     clearErrors,
+
     formState: {
       errors,
       isSubmitting,
@@ -121,11 +119,9 @@ export default function CompanyDialog({
     },
   });
 
-  /*
-  |--------------------------------------------------------------------------
-  | Modal ochilganda formani to'ldirish
-  |--------------------------------------------------------------------------
-  */
+  // ========================================================
+  // LOAD OWNER INTO FORM
+  // ========================================================
 
   useEffect(() => {
     if (!open) {
@@ -134,11 +130,9 @@ export default function CompanyDialog({
 
     clearErrors();
 
-    /*
-    |--------------------------------------------------------------------------
-    | Edit
-    |--------------------------------------------------------------------------
-    */
+    // ======================================================
+    // EDIT
+    // ======================================================
 
     if (owner) {
       reset({
@@ -148,8 +142,8 @@ export default function CompanyDialog({
         username:
           owner.username || "",
 
-        password:
-          "",
+        // Edit paytida password kerak emas.
+        password: "",
 
         phone:
           owner.phone || "",
@@ -169,11 +163,9 @@ export default function CompanyDialog({
       return;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Create
-    |--------------------------------------------------------------------------
-    */
+    // ======================================================
+    // CREATE
+    // ======================================================
 
     reset({
       companyName: "",
@@ -191,45 +183,30 @@ export default function CompanyDialog({
     today,
   ]);
 
-  /*
-  |--------------------------------------------------------------------------
-  | Modal yopiq bo'lsa render qilmaymiz
-  |--------------------------------------------------------------------------
-  */
+  // ========================================================
+  // CLOSED
+  // ========================================================
 
   if (!open) {
     return null;
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | Submit
-  |--------------------------------------------------------------------------
-  */
+  // ========================================================
+  // SUBMIT
+  // ========================================================
 
   async function onSubmit(
     values: FormData
   ) {
-    /*
-    |--------------------------------------------------------------------------
-    | Oldingi validation errorlarni tozalash
-    |--------------------------------------------------------------------------
-    */
+    // ======================================================
+    // CLEAR OLD ERRORS
+    // ======================================================
 
     clearErrors();
 
-    /*
-    |--------------------------------------------------------------------------
-    | Zod validation
-    |--------------------------------------------------------------------------
-    |
-    | Muhim:
-    | safeParse ishlatyapmiz.
-    |
-    | Bu yerda ZodError throw bo'lmaydi.
-    | Shuning uchun development server yiqilmaydi.
-    |
-    */
+    // ======================================================
+    // ZOD VALIDATION
+    // ======================================================
 
     const validation =
       schema.safeParse(values);
@@ -243,8 +220,7 @@ export default function CompanyDialog({
           issue.path[0];
 
         if (
-          typeof field ===
-          "string"
+          typeof field === "string"
         ) {
           setError(
             field as keyof FormData,
@@ -260,20 +236,12 @@ export default function CompanyDialog({
       return;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Validated data
-    |--------------------------------------------------------------------------
-    */
-
     const data =
       validation.data;
 
-    /*
-    |--------------------------------------------------------------------------
-    | Yangi firma uchun password majburiy
-    |--------------------------------------------------------------------------
-    */
+    // ======================================================
+    // CREATE PASSWORD VALIDATION
+    // ======================================================
 
     if (!owner) {
       if (
@@ -293,8 +261,7 @@ export default function CompanyDialog({
       }
 
       if (
-        data.password.length <
-        6
+        data.password.length < 6
       ) {
         setError(
           "password",
@@ -309,18 +276,14 @@ export default function CompanyDialog({
       }
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | API
-    |--------------------------------------------------------------------------
-    */
+    // ======================================================
+    // API
+    // ======================================================
 
     try {
-      /*
-      |--------------------------------------------------------------------------
-      | CREATE
-      |--------------------------------------------------------------------------
-      */
+      // ====================================================
+      // CREATE
+      // ====================================================
 
       if (!owner) {
         await createOwner({
@@ -348,11 +311,9 @@ export default function CompanyDialog({
         );
       }
 
-      /*
-      |--------------------------------------------------------------------------
-      | UPDATE
-      |--------------------------------------------------------------------------
-      */
+      // ====================================================
+      // UPDATE
+      // ====================================================
 
       else {
         await updateOwner(
@@ -377,13 +338,11 @@ export default function CompanyDialog({
         );
       }
 
-      /*
-      |--------------------------------------------------------------------------
-      | Success
-      |--------------------------------------------------------------------------
-      */
+      // ====================================================
+      // SUCCESS
+      // ====================================================
 
-      onSuccess();
+      await onSuccess();
 
       onClose();
 
@@ -396,12 +355,6 @@ export default function CompanyDialog({
         expiresAt: today,
       });
     } catch (error: any) {
-      /*
-      |--------------------------------------------------------------------------
-      | API error
-      |--------------------------------------------------------------------------
-      */
-
       console.error(
         "COMPANY SAVE ERROR:",
         error
@@ -416,19 +369,21 @@ export default function CompanyDialog({
     }
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | UI
-  |--------------------------------------------------------------------------
-  */
+  // ========================================================
+  // UI
+  // ========================================================
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+
       <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
 
-        {/* Header */}
+        {/* ================================================== */}
+        {/* HEADER */}
+        {/* ================================================== */}
 
         <div className="mb-6">
+
           <h2 className="text-2xl font-bold text-slate-800">
             {owner
               ? "Firmani tahrirlash"
@@ -440,9 +395,12 @@ export default function CompanyDialog({
               ? "Firma ma'lumotlarini o'zgartiring"
               : "Yangi firma ma'lumotlarini kiriting"}
           </p>
+
         </div>
 
-        {/* Form */}
+        {/* ================================================== */}
+        {/* FORM */}
+        {/* ================================================== */}
 
         <form
           onSubmit={handleSubmit(
@@ -451,11 +409,12 @@ export default function CompanyDialog({
           className="space-y-4"
         >
 
-          {/* ====================================================== */}
+          {/* ============================================== */}
           {/* COMPANY NAME */}
-          {/* ====================================================== */}
+          {/* ============================================== */}
 
           <div>
+
             <label className="block text-sm font-medium text-slate-700">
               Korxona nomi{" "}
               <span className="text-red-500">
@@ -483,13 +442,15 @@ export default function CompanyDialog({
                 }
               </p>
             )}
+
           </div>
 
-          {/* ====================================================== */}
+          {/* ============================================== */}
           {/* USERNAME */}
-          {/* ====================================================== */}
+          {/* ============================================== */}
 
           <div>
+
             <label className="block text-sm font-medium text-slate-700">
               Username{" "}
               <span className="text-red-500">
@@ -518,13 +479,15 @@ export default function CompanyDialog({
                 }
               </p>
             )}
+
           </div>
 
-          {/* ====================================================== */}
+          {/* ============================================== */}
           {/* PHONE */}
-          {/* ====================================================== */}
+          {/* ============================================== */}
 
           <div>
+
             <label className="block text-sm font-medium text-slate-700">
               Telefon{" "}
               <span className="text-red-500">
@@ -553,13 +516,15 @@ export default function CompanyDialog({
                 }
               </p>
             )}
+
           </div>
 
-          {/* ====================================================== */}
+          {/* ============================================== */}
           {/* ADDRESS */}
-          {/* ====================================================== */}
+          {/* ============================================== */}
 
           <div>
+
             <label className="block text-sm font-medium text-slate-700">
               Manzil{" "}
               <span className="text-red-500">
@@ -587,64 +552,61 @@ export default function CompanyDialog({
                 }
               </p>
             )}
+
           </div>
 
-          {/* ====================================================== */}
-          {/* PASSWORD */}
-          {/* ====================================================== */}
+          {/* ============================================== */}
+          {/* PASSWORD — FAQAT CREATE */}
+          {/* ============================================== */}
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700">
-              Parol{" "}
+          {!owner && (
+            <div>
 
-              {!owner && (
+              <label className="block text-sm font-medium text-slate-700">
+                Parol{" "}
                 <span className="text-red-500">
                   *
                 </span>
-              )}
-            </label>
+              </label>
 
-            <input
-              type="password"
-              {...register(
-                "password"
-              )}
-              placeholder={
-                owner
-                  ? "O'zgartirish uchun yangi parol"
-                  : "Parol kiriting"
-              }
-              autoComplete="new-password"
-              className={`mt-1 w-full rounded-lg border p-3 outline-none transition ${
-                errors.password
-                  ? "border-red-500 focus:ring-2 focus:ring-red-200"
-                  : "border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              }`}
-            />
-
-            {owner && (
-              <p className="mt-1 text-xs text-gray-500">
-                Parolni o'zgartirmoqchi
-                bo'lmasangiz, bo'sh
-                qoldiring.
-              </p>
-            )}
-
-            {errors.password && (
-              <p className="mt-1 text-sm text-red-500">
-                {
+              <input
+                type="password"
+                {...register(
+                  "password"
+                )}
+                placeholder="Parol kiriting"
+                autoComplete="new-password"
+                className={`mt-1 w-full rounded-lg border p-3 outline-none transition ${
                   errors.password
-                    .message
-                }
-              </p>
-            )}
-          </div>
+                    ? "border-red-500 focus:ring-2 focus:ring-red-200"
+                    : "border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                }`}
+              />
 
-          {/* ====================================================== */}
+              <p className="mt-1 text-xs text-gray-500">
+                Parol kamida 6 ta
+                belgidan iborat
+                bo'lishi kerak.
+              </p>
+
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-500">
+                  {
+                    errors.password
+                      .message
+                  }
+                </p>
+              )}
+
+            </div>
+          )}
+
+          {/* ============================================== */}
           {/* LICENSE */}
-          {/* ====================================================== */}
+          {/* ============================================== */}
 
           <div>
+
             <label className="block text-sm font-medium text-slate-700">
               Litsenziya tugash sanasi{" "}
               <span className="text-red-500">
@@ -673,11 +635,12 @@ export default function CompanyDialog({
                 }
               </p>
             )}
+
           </div>
 
-          {/* ====================================================== */}
+          {/* ============================================== */}
           {/* BUTTONS */}
-          {/* ====================================================== */}
+          {/* ============================================== */}
 
           <div className="flex justify-end gap-3 pt-4">
 
@@ -701,8 +664,11 @@ export default function CompanyDialog({
             </button>
 
           </div>
+
         </form>
+
       </div>
+
     </div>
   );
 }
