@@ -1,15 +1,30 @@
 "use client";
 
-import { useState } from "react";
-import { X, Eye, EyeOff } from "lucide-react";
+import {
+  useState,
+} from "react";
+
+import {
+  X,
+  Eye,
+  EyeOff,
+} from "lucide-react";
+
 import { toast } from "sonner";
-import { resetPassword } from "@/services/owner";
+
+import {
+  resetPassword,
+} from "@/services/owner";
 
 interface Props {
   open: boolean;
+
   ownerId: string;
+
   companyName?: string;
+
   onClose: () => void;
+
   onSuccess?: () => void;
 }
 
@@ -20,8 +35,11 @@ export default function ResetPasswordModal({
   onClose,
   onSuccess,
 }: Props) {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [password, setPassword] =
+    useState("");
+
+  const [confirmPassword, setConfirmPassword] =
+    useState("");
 
   const [showPassword, setShowPassword] =
     useState(false);
@@ -29,11 +47,20 @@ export default function ResetPasswordModal({
   const [showConfirmPassword, setShowConfirmPassword] =
     useState(false);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] =
+    useState(false);
+
+  // ==========================================================
+  // CLOSED
+  // ==========================================================
 
   if (!open) {
     return null;
   }
+
+  // ==========================================================
+  // CLOSE
+  // ==========================================================
 
   function handleClose() {
     if (loading) {
@@ -41,41 +68,82 @@ export default function ResetPasswordModal({
     }
 
     setPassword("");
+
     setConfirmPassword("");
+
     setShowPassword(false);
+
     setShowConfirmPassword(false);
 
     onClose();
   }
+
+  // ==========================================================
+  // SUBMIT
+  // ==========================================================
 
   async function handleSubmit(
     event: React.FormEvent<HTMLFormElement>
   ) {
     event.preventDefault();
 
-    const value = password.trim();
+    const value =
+      password.trim();
+
+    // ========================================================
+    // PASSWORD REQUIRED
+    // ========================================================
 
     if (!value) {
-      toast.error("Yangi parolni kiriting.");
+      toast.error(
+        "Yangi parolni kiriting."
+      );
+
       return;
     }
+
+    // ========================================================
+    // MIN LENGTH
+    // ========================================================
 
     if (value.length < 6) {
       toast.error(
         "Parol kamida 6 ta belgidan iborat bo'lishi kerak."
       );
+
       return;
     }
 
-    if (value !== confirmPassword) {
-      toast.error("Parollar bir xil emas.");
+    // ========================================================
+    // CONFIRM
+    // ========================================================
+
+    if (
+      value !==
+      confirmPassword
+    ) {
+      toast.error(
+        "Parollar bir xil emas."
+      );
+
       return;
     }
+
+    // ========================================================
+    // OWNER
+    // ========================================================
 
     if (!ownerId) {
-      toast.error("Firma aniqlanmadi.");
+      toast.error(
+        "Firma aniqlanmadi."
+      );
+
       return;
     }
+
+    // ========================================================
+    // API
+    // ========================================================
 
     try {
       setLoading(true);
@@ -90,12 +158,15 @@ export default function ResetPasswordModal({
       );
 
       setPassword("");
+
       setConfirmPassword("");
 
       setShowPassword(false);
+
       setShowConfirmPassword(false);
 
       onSuccess?.();
+
       onClose();
     } catch (error: any) {
       console.error(
@@ -104,7 +175,8 @@ export default function ResetPasswordModal({
       );
 
       toast.error(
-        error?.response?.data?.message ||
+        error?.response?.data
+          ?.message ||
           "Parolni almashtirishda xatolik yuz berdi."
       );
     } finally {
@@ -112,10 +184,16 @@ export default function ResetPasswordModal({
     }
   }
 
+  // ==========================================================
+  // UI
+  // ==========================================================
+
   return (
     <div
       className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4"
-      onMouseDown={(event) => {
+      onMouseDown={(
+        event
+      ) => {
         if (
           event.target ===
           event.currentTarget
@@ -126,11 +204,14 @@ export default function ResetPasswordModal({
     >
       <div className="w-full max-w-md rounded-2xl bg-white shadow-2xl">
 
+        {/* ================================================== */}
         {/* HEADER */}
+        {/* ================================================== */}
 
         <div className="flex items-start justify-between border-b border-slate-100 p-5">
 
           <div>
+
             <h2 className="text-lg font-semibold text-slate-800">
               Parolni almashtirish
             </h2>
@@ -140,6 +221,7 @@ export default function ResetPasswordModal({
                 {companyName}
               </p>
             )}
+
           </div>
 
           <button
@@ -153,13 +235,21 @@ export default function ResetPasswordModal({
 
         </div>
 
+        {/* ================================================== */}
         {/* FORM */}
+        {/* ================================================== */}
 
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={
+            handleSubmit
+          }
+        >
 
           <div className="space-y-4 p-6">
 
+            {/* ============================================== */}
             {/* NEW PASSWORD */}
+            {/* ============================================== */}
 
             <div>
 
@@ -176,7 +266,9 @@ export default function ResetPasswordModal({
                       : "password"
                   }
                   value={password}
-                  onChange={(event) =>
+                  onChange={(
+                    event
+                  ) =>
                     setPassword(
                       event.target.value
                     )
@@ -191,16 +283,26 @@ export default function ResetPasswordModal({
                   type="button"
                   onClick={() =>
                     setShowPassword(
-                      (value) => !value
+                      (value) =>
+                        !value
                     )
                   }
                   disabled={loading}
                   className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100"
+                  title={
+                    showPassword
+                      ? "Parolni yashirish"
+                      : "Parolni ko'rsatish"
+                  }
                 >
                   {showPassword ? (
-                    <EyeOff size={17} />
+                    <EyeOff
+                      size={17}
+                    />
                   ) : (
-                    <Eye size={17} />
+                    <Eye
+                      size={17}
+                    />
                   )}
                 </button>
 
@@ -212,7 +314,9 @@ export default function ResetPasswordModal({
 
             </div>
 
+            {/* ============================================== */}
             {/* CONFIRM PASSWORD */}
+            {/* ============================================== */}
 
             <div>
 
@@ -228,8 +332,12 @@ export default function ResetPasswordModal({
                       ? "text"
                       : "password"
                   }
-                  value={confirmPassword}
-                  onChange={(event) =>
+                  value={
+                    confirmPassword
+                  }
+                  onChange={(
+                    event
+                  ) =>
                     setConfirmPassword(
                       event.target.value
                     )
@@ -244,16 +352,26 @@ export default function ResetPasswordModal({
                   type="button"
                   onClick={() =>
                     setShowConfirmPassword(
-                      (value) => !value
+                      (value) =>
+                        !value
                     )
                   }
                   disabled={loading}
                   className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100"
+                  title={
+                    showConfirmPassword
+                      ? "Parolni yashirish"
+                      : "Parolni ko'rsatish"
+                  }
                 >
                   {showConfirmPassword ? (
-                    <EyeOff size={17} />
+                    <EyeOff
+                      size={17}
+                    />
                   ) : (
-                    <Eye size={17} />
+                    <Eye
+                      size={17}
+                    />
                   )}
                 </button>
 
@@ -263,7 +381,9 @@ export default function ResetPasswordModal({
 
           </div>
 
+          {/* ================================================= */}
           {/* FOOTER */}
+          {/* ================================================= */}
 
           <div className="flex justify-end gap-3 border-t border-slate-100 p-5">
 

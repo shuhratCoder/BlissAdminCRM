@@ -65,24 +65,29 @@ export default function CompaniesPage() {
   // PAGINATION
   // ==========================================================
 
-  const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 10,
-    total: 0,
-    pages: 1,
-  });
+  const [pagination, setPagination] =
+    useState({
+      page: 1,
+      limit: 10,
+      total: 0,
+      pages: 1,
+    });
 
-  const [page, setPage] = useState(1);
+  const [page, setPage] =
+    useState(1);
 
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] =
+    useState(10);
 
   // ==========================================================
   // FILTERS
   // ==========================================================
 
-  const [status, setStatus] = useState("all");
+  const [status, setStatus] =
+    useState("all");
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] =
+    useState("");
 
   // ==========================================================
   // LOAD COMPANIES
@@ -97,7 +102,9 @@ export default function CompaniesPage() {
         status,
       });
 
-      setOwners(res.owners || []);
+      setOwners(
+        res.owners || []
+      );
 
       setPagination(
         res.pagination || {
@@ -116,7 +123,7 @@ export default function CompaniesPage() {
   }
 
   // ==========================================================
-  // RELOAD
+  // RELOAD WHEN FILTERS CHANGE
   // ==========================================================
 
   useEffect(() => {
@@ -141,7 +148,9 @@ export default function CompaniesPage() {
   // EDIT COMPANY
   // ==========================================================
 
-  function handleEdit(owner: any) {
+  function handleEdit(
+    owner: any
+  ) {
     setSelectedOwner(owner);
     setOpen(true);
   }
@@ -150,7 +159,9 @@ export default function CompaniesPage() {
   // DELETE COMPANY
   // ==========================================================
 
-  function handleDelete(owner: any) {
+  function handleDelete(
+    owner: any
+  ) {
     setDeleteOwnerData(owner);
     setDeleteOpen(true);
   }
@@ -159,13 +170,15 @@ export default function CompaniesPage() {
   // RESET PASSWORD
   // ==========================================================
 
-  function handleResetPassword(owner: any) {
+  function handleResetPassword(
+    owner: any
+  ) {
     setResetPasswordOwner(owner);
     setResetPasswordOpen(true);
   }
 
   // ==========================================================
-  // CLOSE RESET PASSWORD
+  // CLOSE RESET PASSWORD MODAL
   // ==========================================================
 
   function handleResetPasswordClose() {
@@ -177,7 +190,9 @@ export default function CompaniesPage() {
   // EXTEND LICENSE
   // ==========================================================
 
-  function handleExtendLicense(owner: any) {
+  function handleExtendLicense(
+    owner: any
+  ) {
     setDeadlineOwner(owner);
     setDeadlineOpen(true);
   }
@@ -186,17 +201,22 @@ export default function CompaniesPage() {
   // BLOCK OWNER
   // ==========================================================
 
-  async function handleBlock(owner: any) {
-    const confirmed = window.confirm(
-      `"${owner.companyName}" firmasini bloklamoqchimisiz?`
-    );
+  async function handleBlock(
+    owner: any
+  ) {
+    const confirmed =
+      window.confirm(
+        `"${owner.companyName}" firmasini bloklamoqchimisiz?`
+      );
 
     if (!confirmed) {
       return;
     }
 
     try {
-      await blockOwner(owner.id);
+      await blockOwner(
+        owner.id
+      );
 
       await load();
     } catch (error: any) {
@@ -216,17 +236,22 @@ export default function CompaniesPage() {
   // ACTIVATE OWNER
   // ==========================================================
 
-  async function handleActivate(owner: any) {
-    const confirmed = window.confirm(
-      `"${owner.companyName}" firmasini aktiv qilmoqchimisiz?`
-    );
+  async function handleActivate(
+    owner: any
+  ) {
+    const confirmed =
+      window.confirm(
+        `"${owner.companyName}" firmasini aktiv qilmoqchimisiz?`
+      );
 
     if (!confirmed) {
       return;
     }
 
     try {
-      await activateOwner(owner.id);
+      await activateOwner(
+        owner.id
+      );
 
       await load();
     } catch (error: any) {
@@ -315,8 +340,12 @@ export default function CompaniesPage() {
         owners={owners}
         onEdit={handleEdit}
         onDelete={handleDelete}
-        onResetPassword={handleResetPassword}
-        onExtendLicense={handleExtendLicense}
+        onResetPassword={
+          handleResetPassword
+        }
+        onExtendLicense={
+          handleExtendLicense
+        }
         onBlock={handleBlock}
         onActivate={handleActivate}
       />
@@ -328,7 +357,9 @@ export default function CompaniesPage() {
       <CompanyDialog
         open={open}
         owner={selectedOwner}
-        onClose={handleCompanyClose}
+        onClose={
+          handleCompanyClose
+        }
         onSuccess={load}
       />
 
@@ -339,7 +370,9 @@ export default function CompaniesPage() {
       <DeleteCompanyDialog
         open={deleteOpen}
         owner={deleteOwnerData}
-        onClose={handleDeleteClose}
+        onClose={
+          handleDeleteClose
+        }
         onSuccess={load}
       />
 
@@ -358,7 +391,9 @@ export default function CompaniesPage() {
         currentExpireDate={
           deadlineOwner?.license?.expiresAt
         }
-        onClose={handleDeadlineClose}
+        onClose={
+          handleDeadlineClose
+        }
         onSuccess={load}
       />
 

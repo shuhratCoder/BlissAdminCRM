@@ -32,8 +32,7 @@ const schema = z.object({
       "Username kamida 3 ta belgidan iborat bo'lishi kerak"
     ),
 
-  // CREATE paytida kerak.
-  // EDIT paytida ishlatilmaydi.
+  // FAQAT CREATE UCHUN
   password: z
     .string()
     .optional(),
@@ -62,7 +61,8 @@ const schema = z.object({
     ),
 });
 
-type FormData = z.infer<typeof schema>;
+type FormData =
+  z.infer<typeof schema>;
 
 // ==========================================================
 // PROPS
@@ -89,9 +89,10 @@ export default function CompanyDialog({
   // TODAY
   // ========================================================
 
-  const today = new Date()
-    .toISOString()
-    .split("T")[0];
+  const today =
+    new Date()
+      .toISOString()
+      .split("T")[0];
 
   // ========================================================
   // FORM
@@ -120,7 +121,7 @@ export default function CompanyDialog({
   });
 
   // ========================================================
-  // LOAD OWNER INTO FORM
+  // LOAD DATA
   // ========================================================
 
   useEffect(() => {
@@ -142,7 +143,7 @@ export default function CompanyDialog({
         username:
           owner.username || "",
 
-        // Edit paytida password kerak emas.
+        // Editda password ishlatilmaydi
         password: "",
 
         phone:
@@ -198,10 +199,6 @@ export default function CompanyDialog({
   async function onSubmit(
     values: FormData
   ) {
-    // ======================================================
-    // CLEAR OLD ERRORS
-    // ======================================================
-
     clearErrors();
 
     // ======================================================
@@ -213,8 +210,7 @@ export default function CompanyDialog({
 
     if (!validation.success) {
       for (
-        const issue of validation.error
-          .issues
+        const issue of validation.error.issues
       ) {
         const field =
           issue.path[0];
@@ -240,7 +236,7 @@ export default function CompanyDialog({
       validation.data;
 
     // ======================================================
-    // CREATE PASSWORD VALIDATION
+    // CREATE PASSWORD
     // ======================================================
 
     if (!owner) {
@@ -409,9 +405,9 @@ export default function CompanyDialog({
           className="space-y-4"
         >
 
-          {/* ============================================== */}
+          {/* ================================================= */}
           {/* COMPANY NAME */}
-          {/* ============================================== */}
+          {/* ================================================= */}
 
           <div>
 
@@ -445,9 +441,9 @@ export default function CompanyDialog({
 
           </div>
 
-          {/* ============================================== */}
+          {/* ================================================= */}
           {/* USERNAME */}
-          {/* ============================================== */}
+          {/* ================================================= */}
 
           <div>
 
@@ -482,9 +478,9 @@ export default function CompanyDialog({
 
           </div>
 
-          {/* ============================================== */}
+          {/* ================================================= */}
           {/* PHONE */}
-          {/* ============================================== */}
+          {/* ================================================= */}
 
           <div>
 
@@ -519,9 +515,9 @@ export default function CompanyDialog({
 
           </div>
 
-          {/* ============================================== */}
+          {/* ================================================= */}
           {/* ADDRESS */}
-          {/* ============================================== */}
+          {/* ================================================= */}
 
           <div>
 
@@ -555,9 +551,9 @@ export default function CompanyDialog({
 
           </div>
 
-          {/* ============================================== */}
-          {/* PASSWORD — FAQAT CREATE */}
-          {/* ============================================== */}
+          {/* ================================================= */}
+          {/* PASSWORD - FAQAT YANGI FIRMA */}
+          {/* ================================================= */}
 
           {!owner && (
             <div>
@@ -601,9 +597,9 @@ export default function CompanyDialog({
             </div>
           )}
 
-          {/* ============================================== */}
+          {/* ================================================= */}
           {/* LICENSE */}
-          {/* ============================================== */}
+          {/* ================================================= */}
 
           <div>
 
@@ -638,9 +634,9 @@ export default function CompanyDialog({
 
           </div>
 
-          {/* ============================================== */}
+          {/* ================================================= */}
           {/* BUTTONS */}
-          {/* ============================================== */}
+          {/* ================================================= */}
 
           <div className="flex justify-end gap-3 pt-4">
 
@@ -666,9 +662,7 @@ export default function CompanyDialog({
           </div>
 
         </form>
-
       </div>
-
     </div>
   );
 }
