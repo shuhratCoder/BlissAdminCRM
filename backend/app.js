@@ -131,7 +131,11 @@ async function start() {
     |--------------------------------------------------------------------------
     */
 
-    app.listen(PORT, () => {
+    // Faqat lokal interfeys: tashqaridan faqat nginx orqali kiriladi.
+    // Boshqa manzil kerak bo'lsa .env da HOST ni ko'rsating.
+    const HOST = process.env.HOST || "127.0.0.1";
+
+    app.listen(PORT, HOST, () => {
       console.log(
         `Auth server running on port ${PORT}`
       );
