@@ -3,10 +3,13 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const Admin = require("../models/admin");
+const {
+  loginLimiter,
+} = require("../middlewares/rateLimiters");
 
 
 // BIRINCHI ADMIN YARATISH
-router.post("/setup", async (req, res) => {
+router.post("/setup", loginLimiter, async (req, res) => {
   try {
     const adminCount = await Admin.count();
 
@@ -56,10 +59,9 @@ router.post("/setup", async (req, res) => {
 
 
 // ADMIN LOGIN
-router.post("/login", async (req, res) => {
+router.post("/login", loginLimiter, async (req, res) => {
   try {
     const { username, password } = req.body;
-console.log("Login request body:", req.body);
     if (!username || !password) {
       return res.status(400).json({
         success: false,

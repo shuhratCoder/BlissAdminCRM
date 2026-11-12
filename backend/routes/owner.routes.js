@@ -2,6 +2,7 @@ const router = require("express").Router();
 const bcrypt = require("bcrypt");
 const { Op } = require("sequelize");
 
+const sequelize = require("../config/db");
 const Owner = require("../models/owner");
 const License = require("../models/license");
 const adminAuth = require("../middlewares/adminauth");
@@ -144,45 +145,54 @@ router.post(
       |--------------------------------------------------------------------------
       */
 
-      const owner = await Owner.create({
-        companyName:
-          companyName.trim(),
+      // Owner va License bitta tranzaksiyada: biri xato bo'lsa
+      // ikkalasi ham bekor qilinadi.
+      const { owner, license } =
+        await sequelize.transaction(
+          async (transaction) => {
+            const owner = await Owner.create(
+              {
+                companyName:
+                  companyName.trim(),
 
-        username:
-          username.trim(),
+                username:
+                  username.trim(),
 
-        password:
-          hashedPassword,
+                password:
+                  hashedPassword,
 
-        phone:
-          phone.trim(),
+                phone:
+                  phone.trim(),
 
-        address:
-          address.trim(),
+                address:
+                  address.trim(),
 
-        status:
-          "active",
-      });
+                status:
+                  "active",
+              },
+              { transaction }
+            );
 
-      /*
-      |--------------------------------------------------------------------------
-      | License yaratish
-      |--------------------------------------------------------------------------
-      */
+            const license =
+              await License.create(
+                {
+                  ownerId: owner.id,
 
-      const license =
-        await License.create({
-          ownerId: owner.id,
+                  startsAt:
+                    new Date(),
 
-          startsAt:
-            new Date(),
+                  expiresAt:
+                    expireDate,
 
-          expiresAt:
-            expireDate,
+                  status:
+                    "active",
+                },
+                { transaction }
+              );
 
-          status:
-            "active",
-        });
+            return { owner, license };
+          }
+        );
 
       /*
       |--------------------------------------------------------------------------
@@ -618,21 +628,22 @@ router.patch(
         });
       }
 
-      await owner.update({
-        status:
-          "blocked",
-      });
+      await sequelize.transaction(
+        async (transaction) => {
+          await owner.update(
+            { status: "blocked" },
+            { transaction }
+          );
 
-      await License.update(
-        {
-          status:
-            "blocked",
-        },
-        {
-          where: {
-            ownerId:
-              owner.id,
-          },
+          await License.update(
+            { status: "blocked" },
+            {
+              where: {
+                ownerId: owner.id,
+              },
+              transaction,
+            }
+          );
         }
       );
 
@@ -718,13 +729,19 @@ router.patch(
         });
       }
 
-      await owner.update({
-        status: "active",
-      });
+      await sequelize.transaction(
+        async (transaction) => {
+          await owner.update(
+            { status: "active" },
+            { transaction }
+          );
 
-      await license.update({
-        status: "active",
-      });
+          await license.update(
+            { status: "active" },
+            { transaction }
+          );
+        }
+      );
 
       return res.status(200).json({
         success: true,
@@ -845,18 +862,22 @@ router.patch(
         });
       }
 
-      await license.update({
-        expiresAt:
-          newExpireDate,
+      await sequelize.transaction(
+        async (transaction) => {
+          await license.update(
+            {
+              expiresAt: newExpireDate,
+              status: "active",
+            },
+            { transaction }
+          );
 
-        status:
-          "active",
-      });
-
-      await owner.update({
-        status:
-          "active",
-      });
+          await owner.update(
+            { status: "active" },
+            { transaction }
+          );
+        }
+      );
 
       return res.status(200).json({
         success: true,
@@ -1060,14 +1081,20 @@ router.delete(
         });
       }
 
-      await License.destroy({
-        where: {
-          ownerId:
-            owner.id,
-        },
-      });
+      await sequelize.transaction(
+        async (transaction) => {
+          await License.destroy({
+            where: {
+              ownerId: owner.id,
+            },
+            transaction,
+          });
 
-      await owner.destroy();
+          await owner.destroy({
+            transaction,
+          });
+        }
+      );
 
       return res.json({
         success: true,

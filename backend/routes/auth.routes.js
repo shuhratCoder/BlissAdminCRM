@@ -4,9 +4,13 @@ const jwt = require("jsonwebtoken");
 
 const Owner = require("../models/owner");
 const License = require("../models/license");
+const {
+  loginLimiter,
+  verifyLicenseLimiter,
+} = require("../middlewares/rateLimiters");
 
 // DESKTOP APP LOGIN
-router.post("/login", async (req, res) => {
+router.post("/login", loginLimiter, async (req, res) => {
   try {
     const { username, password } = req.body;
 
@@ -148,7 +152,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.post("/verify-license", async (req, res) => {
+router.post("/verify-license", verifyLicenseLimiter, async (req, res) => {
   try {
     const {
       ownerId,
@@ -287,7 +291,6 @@ router.post("/verify-license", async (req, res) => {
         id: owner.id,
         companyName: owner.companyName,
         username: owner.username,
-        phone: owner.phone,
         status: owner.status,
       },
 

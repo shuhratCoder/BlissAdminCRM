@@ -40,6 +40,16 @@ const allowedOrigins = [
 |--------------------------------------------------------------------------
 */
 
+/*
+ * Server reverse proxy (nginx) ortida ishlaydi. Rate limit haqiqiy
+ * client IP ni ko'rishi uchun proxy hop soni ko'rsatiladi.
+ * Proxy bo'lmasa .env da TRUST_PROXY=0 qo'ying.
+ */
+app.set(
+  "trust proxy",
+  Number(process.env.TRUST_PROXY ?? 1)
+);
+
 app.use(express.json());
 
 app.use(helmet());
