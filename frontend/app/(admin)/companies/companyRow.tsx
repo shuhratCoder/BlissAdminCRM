@@ -1,6 +1,9 @@
 "use client";
 
+import { useState } from "react";
+import BackupsModal from "./backupsModal";
 import {
+  DatabaseBackup,
   Pencil,
   KeyRound,
   CalendarClock,
@@ -39,6 +42,10 @@ export default function CompanyRow({
   | License sanasi
   |--------------------------------------------------------------------------
   */
+
+  // Zaxira nusxalar oynasi (shu qatorning o'zida ochiladi)
+  const [backupsOpen, setBackupsOpen] =
+    useState(false);
 
   const expiresAt = owner.license?.expiresAt
     ? new Date(owner.license.expiresAt)
@@ -386,6 +393,19 @@ export default function CompanyRow({
             <CalendarClock size={17} />
           </button>
 
+          {/* Zaxira nusxalar */}
+
+          <button
+            type="button"
+            onClick={() =>
+              setBackupsOpen(true)
+            }
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition hover:bg-teal-50 hover:text-teal-600"
+            title="Zaxira nusxalar"
+          >
+            <DatabaseBackup size={17} />
+          </button>
+
           {/* ====================================================== */}
           {/* BLOCK / ACTIVATE */}
           {/* ====================================================== */}
@@ -428,6 +448,15 @@ export default function CompanyRow({
           </button>
 
         </div>
+
+        <BackupsModal
+          open={backupsOpen}
+          ownerId={owner.id}
+          companyName={owner.companyName}
+          onClose={() =>
+            setBackupsOpen(false)
+          }
+        />
 
       </td>
 

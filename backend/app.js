@@ -9,6 +9,8 @@ const sequelize = require("./config/db");
 const adminRoutes = require("./routes/admin.routes");
 const ownerRoutes = require("./routes/owner.routes");
 const authRoutes = require("./routes/auth.routes");
+const backupRoutes = require("./routes/backup.routes");
+const adminBackupRoutes = require("./routes/adminBackup.routes");
 
 // Associationlar yuklanishi shart
 require("./models/association");
@@ -123,7 +125,13 @@ async function start() {
 
     app.use("/admin", ownerRoutes);
 
+    // Admin panel: firmalarning zaxira nusxalari
+    app.use("/admin", adminBackupRoutes);
+
     app.use("/auth", authRoutes);
+
+    // Desktop CRM ma'lumotlarining zaxira nusxalari
+    app.use("/backup", backupRoutes);
 
     /*
     |--------------------------------------------------------------------------

@@ -8,6 +8,9 @@ const {
   loginLimiter,
   verifyLicenseLimiter,
 } = require("../middlewares/rateLimiters");
+const {
+  signBackupToken,
+} = require("../middlewares/backupAuth");
 
 // DESKTOP APP LOGIN
 router.post("/login", loginLimiter, async (req, res) => {
@@ -137,6 +140,9 @@ router.post("/login", loginLimiter, async (req, res) => {
       },
 
       licenseToken,
+
+      // Zaxira nusxani yuborish/tiklash uchun uzoq muddatli token
+      backupToken: signBackupToken(owner),
     });
 
   } catch (error) {

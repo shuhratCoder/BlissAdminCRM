@@ -95,3 +95,40 @@ export const updateOwner = (
     data
   );
 };
+
+/*
+|--------------------------------------------------------------------------
+| Zaxira nusxalar (desktop dasturdan yuborilgan ma'lumotlar)
+|--------------------------------------------------------------------------
+*/
+
+export const getOwnerBackups = async (
+  id: string
+) => {
+  const { data } = await api.get(
+    `/admin/${id}/backups`
+  );
+
+  return data;
+};
+
+export const downloadOwnerBackup = async (
+  id: string,
+  backupId: string
+): Promise<{ blob: Blob; fileName: string }> => {
+  const response = await api.get(
+    `/admin/${id}/backups/${backupId}/download`,
+    {
+      responseType: "blob",
+    }
+  );
+
+  const fileName =
+    response.headers["x-backup-file-name"] ||
+    `bliss-zaxira-${backupId}.blissbak`;
+
+  return {
+    blob: response.data,
+    fileName,
+  };
+};

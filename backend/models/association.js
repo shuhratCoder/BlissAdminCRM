@@ -13,8 +13,23 @@ License.belongsTo(Owner, {
   as: "owner",
 });
 
+const OwnerBackup = require("./ownerBackup");
+
+// Owner o'chirilsa, uning zaxira nusxalari ham o'chadi
+Owner.hasMany(OwnerBackup, {
+  foreignKey: "ownerId",
+  as: "backups",
+  onDelete: "CASCADE",
+});
+
+OwnerBackup.belongsTo(Owner, {
+  foreignKey: "ownerId",
+  as: "owner",
+});
+
 module.exports = {
   Admin,
   Owner,
   License,
+  OwnerBackup,
 };

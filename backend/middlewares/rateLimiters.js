@@ -39,7 +39,21 @@ const verifyLicenseLimiter = rateLimit({
   ),
 });
 
+/*
+ * Zaxira nusxa: desktop ilova soatiga bir necha marta murojaat qiladi.
+ */
+const backupLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 60,
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+  handler: tooManyRequests(
+    "Juda ko'p so'rov. Birozdan keyin qayta urinib ko'ring."
+  ),
+});
+
 module.exports = {
   loginLimiter,
   verifyLicenseLimiter,
+  backupLimiter,
 };
